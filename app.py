@@ -144,5 +144,73 @@ if st.button(t["delete"]):
         index=False
     )
 
+    # --------------------
+# Medicine Chatbot
+# --------------------
+
+st.divider()
+
+st.subheader("🤖 Medicine Chatbot")
+
+user_question = st.text_input(
+    "Ask a question about medicines"
+)
+
+if st.button("Ask Chatbot"):
+
+    question = user_question.lower()
+
+    if "crocin" in question:
+        st.success("""
+Crocin Information
+
+Uses:
+• Reduces fever
+• Relieves headache
+• Helps with body pain
+
+Precautions:
+• Follow recommended dosage
+• Consult a doctor if symptoms continue
+""")
+
+    elif "paracetamol" in question:
+        st.success("""
+Paracetamol Information
+
+Uses:
+• Fever reduction
+• Pain relief
+
+Precautions:
+• Avoid overdose
+• Follow doctor's advice
+""")
+
+    elif "dolo" in question:
+        st.success("""
+Dolo 650 Information
+
+Uses:
+• Fever
+• Cold symptoms
+• Body pain
+
+Precautions:
+• Use as prescribed
+""")
+
+    elif "medicine" in question:
+        st.info("""
+Medicines should be taken according to the prescribed dosage and timing.
+Always consult a healthcare professional before making changes to medication.
+""")
+
+    else:
+        st.warning("""
+Sorry, information for this medicine is not available in the local database.
+Please consult a healthcare professional.
+""")
+
     st.success(t["deleted"])
     st.rerun()
