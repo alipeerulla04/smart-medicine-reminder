@@ -102,6 +102,11 @@ Localization has been implemented for:
 
 This enables users to interact with the application in their preferred language without affecting functionality.
 
+### 🤖 Medicine Chatbot
+- Answers common medicine-related questions
+- Provides usage information
+- Offers precautionary guidance
+- Works without internet connectivity
 ---
 
 ## Project Architecture
