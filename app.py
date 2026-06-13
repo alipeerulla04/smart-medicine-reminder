@@ -1,28 +1,92 @@
 import streamlit as st
 import pandas as pd
 import os
-from datetime import datetime
 
+# --------------------
+# Page Config
+# --------------------
 st.set_page_config(
     page_title="Smart Medicine Reminder",
     page_icon="💊",
     layout="wide"
 )
 
-st.title("💊 Smart Medicine Reminder")
-st.write("Never miss your medicines again!")
+# --------------------
+# Language Selection
+# --------------------
+language = st.sidebar.selectbox(
+    "🌐 Select Language",
+    ["English", "తెలుగు", "हिन्दी"]
+)
 
-# ---------------------------
+translations = {
+    "English": {
+        "title": "💊 Smart Medicine Reminder",
+        "subtitle": "Never miss your medicines again!",
+        "add_medicine": "➕ Add Medicine",
+        "medicine": "Medicine Name",
+        "dosage": "Dosage",
+        "time": "Medicine Time",
+        "button": "Add Medicine",
+        "saved": "📋 Saved Medicines",
+        "success": "Medicine Added Successfully!",
+        "delete": "🗑 Clear All Medicines",
+        "deleted": "All medicines deleted!",
+        "empty": "No medicines added yet.",
+        "total": "Total Medicines"
+    },
+
+    "తెలుగు": {
+        "title": "💊 స్మార్ట్ మెడిసిన్ రిమైండర్",
+        "subtitle": "మీ మందులను మర్చిపోవద్దు!",
+        "add_medicine": "➕ మందు జోడించండి",
+        "medicine": "మందు పేరు",
+        "dosage": "మోతాదు",
+        "time": "మందు సమయం",
+        "button": "మందు జోడించండి",
+        "saved": "📋 సేవ్ చేసిన మందులు",
+        "success": "మందు విజయవంతంగా జోడించబడింది!",
+        "delete": "🗑 అన్ని మందులు తొలగించండి",
+        "deleted": "అన్ని మందులు తొలగించబడ్డాయి!",
+        "empty": "మందులు లేవు.",
+        "total": "మొత్తం మందులు"
+    },
+
+    "हिन्दी": {
+        "title": "💊 स्मार्ट मेडिसिन रिमाइंडर",
+        "subtitle": "अपनी दवाइयाँ लेना न भूलें!",
+        "add_medicine": "➕ दवा जोड़ें",
+        "medicine": "दवा का नाम",
+        "dosage": "खुराक",
+        "time": "दवा का समय",
+        "button": "दवा जोड़ें",
+        "saved": "📋 सहेजी गई दवाएँ",
+        "success": "दवा सफलतापूर्वक जोड़ी गई!",
+        "delete": "🗑 सभी दवाएँ हटाएँ",
+        "deleted": "सभी दवाएँ हटा दी गईं!",
+        "empty": "कोई दवा नहीं मिली।",
+        "total": "कुल दवाएँ"
+    }
+}
+
+t = translations[language]
+
+# --------------------
+# Title
+# --------------------
+st.title(t["title"])
+st.write(t["subtitle"])
+
+# --------------------
 # Add Medicine
-# ---------------------------
+# --------------------
+st.subheader(t["add_medicine"])
 
-st.subheader("➕ Add Medicine")
+medicine = st.text_input(t["medicine"])
+dosage = st.text_input(t["dosage"])
+time = st.time_input(t["time"])
 
-medicine = st.text_input("Medicine Name")
-dosage = st.text_input("Dosage")
-time = st.time_input("Medicine Time")
-
-if st.button("Add Medicine"):
+if st.button(t["button"]):
 
     if medicine and dosage:
 
@@ -45,58 +109,33 @@ if st.button("Add Medicine"):
                 index=False
             )
 
-        st.success("✅ Medicine Added Successfully!")
+        st.success(t["success"])
 
-# ---------------------------
+# --------------------
 # Show Medicines
-# ---------------------------
-
+# --------------------
 st.divider()
 
-st.subheader("📋 Saved Medicines")
+st.subheader(t["saved"])
 
 if os.path.exists("medicines.csv"):
 
     df = pd.read_csv("medicines.csv")
 
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")
 
-    st.metric("Total Medicines", len(df))
+    st.metric(
+        t["total"],
+        len(df)
+    )
 
 else:
-    st.info("No medicines added yet.")
+    st.info(t["empty"])
 
-# ---------------------------
-# Reminder Alert
-# ---------------------------
-
-st.divider()
-
-st.subheader("⏰ Reminder Check")
-
-current_time = datetime.now().strftime("%H:%M")
-
-if os.path.exists("medicines.csv"):
-
-    df = pd.read_csv("medicines.csv")
-
-    for _, row in df.iterrows():
-
-        medicine_time = str(row["Time"])[:5]
-
-        if medicine_time == current_time:
-
-            st.warning(
-                f"⚠️ Time to take {row['Medicine']} ({row['Dosage']})"
-            )
-
-# ---------------------------
-# Delete Medicines
-# ---------------------------
-
-st.divider()
-
-if st.button("🗑 Clear All Medicines"):
+# --------------------
+# Clear Medicines
+# --------------------
+if st.button(t["delete"]):
 
     pd.DataFrame(
         columns=["Medicine", "Dosage", "Time"]
@@ -105,91 +144,5 @@ if st.button("🗑 Clear All Medicines"):
         index=False
     )
 
-    st.success("All medicines deleted!")
+    st.success(t["deleted"])
     st.rerun()
-
-# ---------------------------
-# AI Medicine Assistant
-# ---------------------------
-
-st.divider()
-
-st.subheader("🤖 AI Medicine Assistant")
-
-question = st.text_input(
-    "Ask about any medicine",
-    placeholder="What is Crocin used for?"
-)
-
-if st.button("Get AI Answer"):
-
-    medicine_info = {
-
-        "crocin": """
-### Crocin
-
-**Uses**
-- Reduces fever
-- Relieves headache
-- Reduces body pain
-
-**Side Effects**
-- Nausea
-- Stomach discomfort
-
-**Precautions**
-- Do not exceed recommended dosage
-""",
-
-        "paracetamol": """
-### Paracetamol
-
-**Uses**
-- Fever reduction
-- Pain relief
-
-**Side Effects**
-- Rare allergic reactions
-
-**Precautions**
-- Avoid overdose
-""",
-
-        "dolo 650": """
-### Dolo 650
-
-**Uses**
-- Fever
-- Cold symptoms
-- Body pain
-
-**Side Effects**
-- Nausea
-- Dizziness
-
-**Precautions**
-- Use as directed by a doctor
-"""
-    }
-
-    query = question.lower()
-
-    found = False
-
-    for med in medicine_info:
-
-        if med in query:
-
-            st.success("Answer Generated")
-
-            st.markdown(medicine_info[med])
-
-            found = True
-
-            break
-
-    if not found:
-
-        st.info(
-            "Medicine information not available in local database."
-        )
